@@ -203,14 +203,13 @@ def manually_fill():
                     time = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                     Hour, Minute, Second = time.split(":")
                     Insert_data = "INSERT INTO " + DB_table_name + "(ID,ROLL,NAME,SEAT,ADDRESS,MOBILE,EXAM,EADDRESS,DATE,TIME) VALUES (0, %s, %s, %s,%s, %s, %s, %s, %s, %s) "
-                    VALUES = (
-                        str(ROLL), str(STUDENT), str(SEAT), str(ADDRESS), str(MOBILE), str(EXAM), str(EADDRESS),
-                        str(Date),
-                        str(time))
+                    VALUES = (str(ROLL), str(STUDENT), str(SEAT), str(ADDRESS), str(MOBILE),
+                              str(EXAM), str(EADDRESS), str(Date), str(time))
                     try:
                         cursor.execute(Insert_data, VALUES)
-                        MSG = tk.Label(MFW, text='Manually Seat Allot Successfully', width=20, bg="blue2", fg="white",
-                                       font=('times', 12, ' bold '))
+                        connection.commit()
+                        MSG = tk.Label(MFW, text='Manually Seat Allot Successfully', width=30, bg="blue2", fg="white",
+                                       font=('times', 13, ' bold '))
                         MSG.place(x=180, y=380)
                     except Exception as e:
                         print(e)
@@ -239,7 +238,7 @@ def manually_fill():
                         c = 0
                         for row in col:
                             # i've added some styling
-                            label = tkinter.Label(root, width=13, height=1, fg="black", font=('times', 13, ' bold '),
+                            label = tkinter.Label(root, width=12, height=1, fg="black", font=('times', 13, ' bold '),
                                                   bg="lawn green", text=row, relief=tkinter.RIDGE)
                             label.grid(row=r, column=c)
                             c += 1
@@ -410,9 +409,10 @@ def take_img():
                 writer = csv.writer(csvFile, delimiter=',')
                 writer.writerow(row)
                 csvFile.close()
-            res = "Images Saved for Roll No. : " + Roll + " Name : " + Name + " Seat :" + Seat
-            Notification.configure(text=res, bg="SpringGreen3", height=1, width=40, font=('times', 15, 'bold'))
+            res = "Images Saved for Roll No. : " + Roll + ", Name : " + Name + " and Seat :" + Seat
+            Notification.configure(text=res, bg="SpringGreen3", height=1, width=70, font=('times', 15, 'bold'))
             Notification.place(x=350, y=400)
+
         except FileExistsError as F:
             f = 'Student Data already exists'
             Notification.configure(text=f, bg="Red", width=21)
@@ -422,12 +422,12 @@ def take_img():
 # for choose subject and fill attendance
 def subjectchoose():
     def Fillattendances():
-        sub = tx.get()
+        Subject = tx.get()
         now = time.time()
         # For calculate seconds of video
         future = now + 20
         if time.time() < future:
-            if sub == '':
+            if Subject == '':
                 err_screen1()
             else:
                 recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
@@ -442,11 +442,10 @@ def subjectchoose():
                 faceCascade = cv2.CascadeClassifier(harcascadePath)
                 df = pd.read_csv("StudentDetails\StudentDetails.csv")
                 cam = cv2.VideoCapture(0)
-                font = cv2.FONT_HERSHEY_SIMPLEX
+                fontFace = cv2.FONT_HERSHEY_SIMPLEX
                 col_names = ['Roll', 'Name', 'Seat', 'Address', 'Mobile', 'Exam', 'Eaddress', 'Date', 'Time']
                 attendance = pd.DataFrame(columns=col_names)
-                global Subject
-                global aa
+                global aa, bb, cc, dd, ee, ff
                 global Id
                 while True:
                     ret, im = cam.read()
@@ -457,32 +456,39 @@ def subjectchoose():
                         Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
                         if conf < 50:
                             print(conf)
-                            global Subject
                             # global aa
                             global date
                             global timeStamp
-                            Subject = tx.get()
                             ts = time.time()
                             date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
                             timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                             aa = df.loc[df['Roll'] == Id]['Name'].values
+                            bb = df.loc[df['Roll'] == Id]['Seat'].values
+                            cc = df.loc[df['Roll'] == Id]['Address'].values
+                            dd = df.loc[df['Roll'] == Id]['Mobile'].values
+                            ee = df.loc[df['Roll'] == Id]['Exam'].values
+                            ff = df.loc[df['Roll'] == Id]['Eaddress'].values
                             global tt
-                            tt = str(Id) + "-" + aa
-                            En = '15624031' + str(Id)
-                            attendance.loc[len(attendance)] = [Id, aa, date, timeStamp]
+                            # Show Roll number, name and seat no. on screen
+                            tt = "Roll " + str(Id) + " Name " + aa + "Seat No " + bb
+                            print(tt)
+                            # En = '15624031' + str(Id)
+                            En = 'ADM' + str(Id)
+                            print(En)
+                            attendance.loc[len(attendance)] = [Id, aa, bb, cc, dd, ee, ff, date, timeStamp]
                             cv2.rectangle(im, (x, y), (x + w, y + h), (0, 260, 0), 7)
-                            cv2.putText(im, str(tt), (x + h, y), font, 1, (255, 255, 0,), 4)
-
+                            # cv2.putText(im, str(tt), (x + h, y), font, 1, (255, 255, 0,), 4)
+                            cv2.putText(im, str(tt), (10, 180), fontFace, 1, (255, 255, 0,), 2)
                         else:
                             Id = 'Unknown'
                             tt = str(Id)
                             cv2.rectangle(im, (x, y), (x + w, y + h), (0, 25, 255), 7)
-                            cv2.putText(im, str(tt), (x + h, y), font, 1, (0, 25, 255), 4)
+                            cv2.putText(im, str(tt), (x + h, y), fontFace, 1, (0, 25, 255), 2)
                     if time.time() > future:
                         break
 
                     attendance = attendance.drop_duplicates(['Roll'], keep='first')
-                    cv2.imshow('Filling attendance..', im)
+                    cv2.imshow('Filling attendance and Seat Allotment...', im)
                     key = cv2.waitKey(30) & 0xff
                     if key == 27:
                         break
@@ -498,7 +504,7 @@ def subjectchoose():
 
                 # Create table for Attendance
                 date_for_DB = datetime.datetime.fromtimestamp(ts).strftime('%Y_%m_%d')
-                DB_Table_name = str(Subject + "_" + date_for_DB + "_Time_" + Hour + "_" + Minute + "_" + Second)
+                DB_Table_name = str(Subject + "_" + date_for_DB + "_" + Hour + "_" + Minute + "_" + Second)
                 import pymysql.connections
 
                 # Connect to the database
@@ -525,17 +531,18 @@ def subjectchoose():
                 """
                 # Now enter attendance in Database
                 insert_data = "INSERT INTO " + DB_Table_name + "(ID,ROLl,NAME,SEAT,ADDRESS,MOBILE,EXAM,EADDRESS,DATE,TIME) VALUES (0, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
-                VALUES = (str(Id), str(aa), str(date), str(timeStamp))
+                VALUES = (str(Id), str(aa), str(bb), str(cc), str(dd), str(ee), str(ff), str(date), str(timeStamp))
                 try:
                     cursor.execute(sql)
                     # for create a table
                     cursor.execute(insert_data, VALUES)
+                    connection.commit()
                     # For insert data into table
                 except Exception as ex:
                     print(ex)
 
-                M = 'Attendance filled Successfully'
-                Notifica.configure(text=M, bg="Green", fg="white", width=33, font=('times', 15, 'bold'))
+                M = 'Seat & Attendance filled Successfully'
+                Notifica.configure(text=M, bg="Green", fg="white", width=33, font=('times', 13, 'bold'))
                 Notifica.place(x=20, y=250)
 
                 cam.release()
@@ -555,7 +562,7 @@ def subjectchoose():
                         c = 0
                         for row in col:
                             # i've added some styling
-                            label = tkinter.Label(root, width=8, height=1, fg="black", font=('times', 15, ' bold '),
+                            label = tkinter.Label(root, width=12, height=1, fg="black", font=('times', 15, ' bold '),
                                                   bg="lawn green", text=row, relief=tkinter.RIDGE)
                             label.grid(row=r, column=c)
                             c += 1
@@ -569,8 +576,8 @@ def subjectchoose():
     windo.title("Enter subject name...")
     windo.geometry('580x320')
     windo.configure(background='snow')
-    Notifica = tk.Label(windo, text="Attendance filled Successfully", bg="Green", fg="white", width=33,
-                        height=2, font=('times', 15, 'bold'))
+    Notifica = tk.Label(windo, text="Seat & Attendance filled Successfully", bg="Green", fg="white", width=33,
+                        height=2, font=('times', 13, 'bold'))
 
     def Attf():
         import subprocess
@@ -588,7 +595,7 @@ def subjectchoose():
     tx = tk.Entry(windo, width=20, bg="yellow", fg="red", font=('times', 23, ' bold '))
     tx.place(x=250, y=105)
 
-    fill_a = tk.Button(windo, text="Fill Attendance", fg="white", command=Fillattendances, bg="deep pink", width=20,
+    fill_a = tk.Button(windo, text="Seat & Attendance", fg="white", command=Fillattendances, bg="deep pink", width=20,
                        height=2,
                        activebackground="Red", font=('times', 15, ' bold '))
     fill_a.place(x=250, y=160)
@@ -624,7 +631,7 @@ def admin_panel():
                         c = 0
                         for row in col:
                             # i've added some styling
-                            label = tkinter.Label(root, width=8, height=1, fg="black", font=('times', 15, ' bold '),
+                            label = tkinter.Label(root, width=12, height=1, fg="black", font=('times', 15, ' bold '),
                                                   bg="lawn green", text=row, relief=tkinter.RIDGE)
                             label.grid(row=r, column=c)
                             c += 1
@@ -697,6 +704,7 @@ def trainimg():
     try:
         recognizer.save("TrainingImageLabel\Trainner.yml")
     except Exception as e:
+        print(e)
         q = 'Please make "TrainingImageLabel" folder'
         Notification.configure(text=q, bg="SpringGreen3", width=50, font=('times', 18, 'bold'))
         Notification.place(x=350, y=400)
@@ -766,16 +774,16 @@ txt = tk.Entry(window, validate="key", width=20, bg="yellow", fg="red", font=('t
 txt['validatecommand'] = (txt.register(testVal), '%P', '%d')
 txt.place(x=300, y=100)
 
+clearButton = tk.Button(window, text="Clear", command=clear, fg="white", bg="black", width=10, height=1,
+                        activebackground="Red", font=('times', 10, ' bold '))
+clearButton.place(x=520, y=100)
+
 lbl2 = tk.Label(window, text="2.Enter Name", width=20, fg="black", bg="deep pink", height=1,
                 font=('times', 15, ' bold '))
 lbl2.place(x=40, y=160)
 
 txt2 = tk.Entry(window, width=20, bg="yellow", fg="red", font=('times', 15, ' bold '))
 txt2.place(x=300, y=160)
-
-clearButton = tk.Button(window, text="Clear", command=clear, fg="white", bg="black", width=10, height=1,
-                        activebackground="Red", font=('times', 10, ' bold '))
-clearButton.place(x=520, y=100)
 
 clearButton1 = tk.Button(window, text="Clear", command=clear1, fg="white", bg="black", width=10, height=1,
                          activebackground="Red", font=('times', 10, ' bold '))
@@ -784,6 +792,10 @@ clearButton1.place(x=520, y=160)
 lbl3 = tk.Label(window, text="3.Seat Number", width=20, height=1, fg="black", bg="deep pink",
                 font=('times', 15, ' bold '))
 lbl3.place(x=40, y=220)
+
+lblshow = tk.Label(window, text="Enter Seat number this format eg. Room-00-Seat-00", width=50, height=1, fg="red",
+                   bg="#ab23ff", font=('times', 8, 'normal'))
+lblshow.place(x=280, y=200)
 
 txt3 = tk.Entry(window, width=20, bg="yellow", fg="red", font=('times', 15, ' bold '))
 txt3.place(x=300, y=220)
@@ -849,11 +861,11 @@ trainImg = tk.Button(window, text="2.Train Images", fg="black", command=trainimg
                      activebackground="Red", font=('times', 15, ' bold '))
 trainImg.place(x=390, y=500)
 
-FA = tk.Button(window, text="3.Automatic Attendance", fg="white", command=subjectchoose, bg="blue2", width=20, height=2,
+FA = tk.Button(window, text="3.Generating Seat", fg="white", command=subjectchoose, bg="blue2", width=20, height=2,
                activebackground="Red", font=('times', 15, ' bold '))
 FA.place(x=690, y=500)
 
-quitWindow = tk.Button(window, text="4.Manually Fill Attendance", command=manually_fill, fg="black", bg="lawn green",
+quitWindow = tk.Button(window, text="4.Manually Seat Allotment", command=manually_fill, fg="black", bg="lawn green",
                        width=20, height=2, activebackground="Red", font=('times', 15, ' bold '))
 quitWindow.place(x=990, y=500)
 
