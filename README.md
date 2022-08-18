@@ -23,7 +23,7 @@
 - It will collect 200 images of your faces, it save a images in `TrainingImage` folder
 - After that we need to train a model(for train a model click on `Train Image` button.
 - It will take 5-10 minutes for training(for 10 person data).
-- After training click on `Automatic Attendance` ,it can fill attendace by your face using our trained model (model will save in `TrainingImageLabel` )
+- After training click on `Automatic Attendance And Seat Allotment` ,it can fill attendace by your face using our trained model (model will save in `TrainingImageLabel` )
 - it will create `.csv` file of attendance according to time & subject.
 - You can store data in database (install wampserver),change the DB name according to your in `AMS_Run.py`.
 - `Manually Fill Attendace` Button in UI is for fill a manually attendance (without facce recognition),it's also create a `.csv` and store in a database.
