@@ -31,16 +31,16 @@
 ### Screenshots
 
 ### Basic UI
-<img src="#">
+<img src="https://github.com/erahulkumar/Seat-Allotment-System-based-Face-Recognition/blob/main/Att.png">
 
-### When it's Recognise me
-<img src="#">
+### Next Step
+<img src="https://github.com/erahulkumar/Seat-Allotment-System-based-Face-Recognition/blob/main/Screenshot%20(10).png">
 
-### When it's fill a attendace
-<img src="#">
+### Next Step 
+<img src="https://github.com/erahulkumar/Seat-Allotment-System-based-Face-Recognition/blob/main/Screenshot%20(11).png">
 
 ### Manually attendance filling UI
-<img src="#">
+<img src="https://github.com/erahulkumar/Seat-Allotment-System-based-Face-Recognition/blob/main/Screenshot%20(12).png">
 
 
 ### How it works? See:)
