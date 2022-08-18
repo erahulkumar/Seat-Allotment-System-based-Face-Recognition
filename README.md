@@ -45,11 +45,9 @@
 
 ### How it works? See:)
 
-<img src="https://youtu.be/9kz-GF7XoEs">
-
 ### Video demo
 
-
+<a href="https://youtu.be/9kz-GF7XoEs">Project Video link</a>
 
 
 ### Notes
