@@ -51,7 +51,7 @@
 
 
 ### Notes
-- It will require high processing power(I have 8 GB RAM & 2 GB GC)
+- It will require high processing power(I have 8 GB RAM & 2 GB)
 - If you think it will recognise person just like humans,than leave it ,its not possible.
 - Noisy image can reduce your accuracy so quality of images matter.
 
